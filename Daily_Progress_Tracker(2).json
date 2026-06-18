@@ -1,0 +1,100 @@
+{
+  "name": "Daily Progress Tracker - Team Notify",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REPLACE_WITH_YOUR_SPREADSHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Form Responses 1"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "name": "Google Sheets Trigger",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "credentials": {
+        "googleApi": {
+          "id": "REPLACE_WITH_YOUR_GOOGLE_CREDENTIAL_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "const row = $input.first().json;\n\nconst name     = row['Your name'] || '';\nconst time     = row['Check-in time'] || '';\nconst task     = row['What are you working on?'] || '';\nconst progress = (parseFloat(row['Progress on today\\u2019s tasks (%)'] || 0) * 10).toFixed(0);\nconst notes    = row['Any blockers or notes?'] || 'None';\nconst timestamp = new Date().toLocaleString('en-IN', {timeZone:'Asia/Kolkata'});\n\nreturn [{ json: { name, time, task, progress, notes, timestamp } }];"
+      },
+      "id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "name": "Set Variables",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "sendTo": "REPLACE_WITH_EMPLOYEE_EMAILS_COMMA_SEPARATED",
+        "subject": "={{ $json.name }} just submitted their {{ $json.time }} update",
+        "emailType": "html",
+        "message": "<h3 style=\"margin:0 0 12px\">Progress check-in</h3>\n<table style=\"font-family:sans-serif;font-size:14px;border-collapse:collapse;width:100%\">\n  <tr><td style=\"padding:6px 0;color:#666;width:140px\">Name</td><td style=\"padding:6px 0\"><b>{{ $json.name }}</b></td></tr>\n  <tr><td style=\"padding:6px 0;color:#666\">Time slot</td><td style=\"padding:6px 0\">{{ $json.time }}</td></tr>\n  <tr><td style=\"padding:6px 0;color:#666\">Working on</td><td style=\"padding:6px 0\">{{ $json.task }}</td></tr>\n  <tr><td style=\"padding:6px 0;color:#666\">Progress</td><td style=\"padding:6px 0\"><b>{{ $json.progress }}%</b></td></tr>\n  <tr><td style=\"padding:6px 0;color:#666\">Notes</td><td style=\"padding:6px 0\">{{ $json.notes }}</td></tr>\n  <tr><td style=\"padding:6px 0;color:#666\">Submitted at</td><td style=\"padding:6px 0\">{{ $json.timestamp }}</td></tr>\n</table>",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0003-4000-8000-000000000003",
+      "name": "Send Team Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [680, 300],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_WITH_YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variables": {
+      "main": [
+        [
+          {
+            "node": "Send Team Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "versionId": "00000000-0000-4000-8000-000000000001"
+}
