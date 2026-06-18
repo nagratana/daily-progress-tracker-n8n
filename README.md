@@ -20,7 +20,7 @@ for the day, and emails a formatted summary table to the manager.
 
 ## Workflow overview
 
-![n8n workflow overview](workflow-screenshot.png)
+![n8n workflow overview](Screenshot 2026-06-18 161154.png)
 
 The top row (Google Sheets Trigger, Set Variables, Send Team Email) runs
 on every new form submission. The bottom row (Schedule Trigger, Read
