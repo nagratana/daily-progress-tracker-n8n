@@ -33,7 +33,7 @@ Manager) runs once a day on a schedule.
   submissions and emails the team on every check-in.
 - `EOD_Manager_Report.json` — n8n workflow that runs on a daily schedule
   and emails a ranked summary to the manager.
-- `workflow-screenshot.png` — reference screenshot of both workflows as
+- `Screenshot 2026-06-18 161154.png` — reference screenshot of both workflows as
   they appear in the n8n editor.
 
 ## Requirements
